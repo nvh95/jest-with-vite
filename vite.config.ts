@@ -5,24 +5,17 @@ import react from "@vitejs/plugin-react";
 export default defineConfig(({ mode }) => {
   // expose .env as process.env instead of import.meta.env
   // Reference: https://github.com/vitejs/vite/issues/1149#issuecomment-857686209
-  const env = loadEnv(mode, process.cwd(), "VITE_APP");
-  const envWithProcessPrefix = Object.entries(env).reduce(
-    (prev, [key, val]) => {
-      return {
-        ...prev,
-        ["process.env." + key]: `"${val}"`,
-      };
-    },
-    {}
-  );
+  let env = loadEnv(mode, process.cwd(), "VITE_APP");
 
-  // Inject NODE_ENV and make sure envWithProcessPrefix is not empty
-  envWithProcessPrefix["process.env.NODE_ENV"] = `'${mode}'`;
+  // Optional: Populate NODE_ENV with the current mode (development/production)
+  env.NODE_ENV = mode;
+
+  const envWithProcessPrefix = {
+    "process.env": `${JSON.stringify(env)}`,
+  };
 
   return {
     plugins: [react()],
-    // If `envWithProcessPrefix` is an empty object, `process.env` will be undefined and the app cannot be loaded
-    // Caveat: Cannot access `process.env` in build mode, always use `process.env.VARIABLE_NAME`
     define: envWithProcessPrefix,
   };
 });

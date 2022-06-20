@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.prod.json && vite build",
+    "build:nc": "vite build",
     "preview": "vite preview",
     "test": "NODE_ENV=test jest"
   },
